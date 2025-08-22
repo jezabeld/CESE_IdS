@@ -1,0 +1,18 @@
+BasedOnStyle: WebKit
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: true
+ColumnLimit: 120
+
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortLambdasOnASingleLine: false
+SortIncludes: false
+IndentCaseLabels: false
+AccessModifierOffset: -4
+FixNamespaceComments: false
+PointerAlignment: Middle
+AlignConsecutiveMacros: AcrossEmptyLines
