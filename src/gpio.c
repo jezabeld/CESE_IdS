@@ -2,7 +2,8 @@
 SPDX-License-Identifier: MIT
 *************************************************************************************************/
 
-/** @brief Implementación del driver GPIO
+/** @file gpio.c
+ * @brief Implementación del driver GPIO
  *
  * Este archivo contiene la implementación de las funciones para el manejo
  * de GPIO definidas en gpio.h

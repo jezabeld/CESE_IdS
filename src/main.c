@@ -2,10 +2,11 @@
 SPDX-License-Identifier: MIT
 *************************************************************************************************/
 
-/** @brief Brief description of the file
+/** @file main.c
+ * @brief Programa principal
  *
- * Full file description
- *
+ * @author Jez - CESE-IdS
+ * @version 1.0
  */
 
 /* === Headers files inclusions =============================================================== */
@@ -13,7 +14,11 @@ SPDX-License-Identifier: MIT
 #include "gpio.h"
 
 /* === Macros definitions ====================================================================== */
+
+/** @brief Puerto del LED rojo */
 #define LED_ROJO_PORT 0
+
+/** @brief Pin del LED rojo */
 #define LED_ROJO_PIN 1
 
 /* === Private data type declarations ========================================================== */
@@ -29,6 +34,14 @@ SPDX-License-Identifier: MIT
 /* === Private function implementation ========================================================= */
 
 /* === Public function implementation ========================================================== */
+
+/** @brief Función principal del programa
+ *
+ * Demuestra el uso básico del driver GPIO creando una instancia
+ * para un LED, configurándolo como salida y encendiéndolo.
+ *
+ * @return 0 si la ejecución fue exitosa
+ */
 int main(void) {
   gpio_t led_rojo = gpioCreate(LED_ROJO_PORT, LED_ROJO_PIN);
 

@@ -2,7 +2,8 @@
 SPDX-License-Identifier: MIT
 *************************************************************************************************/
 
-/** @brief Driver GPIO para microcontrolador
+/** @file gpio.h
+ * @brief Driver GPIO para microcontrolador
  *
  * Este archivo proporciona una capa de abstracción para GPIO que permite
  * crear y gestionar pines GPIO para operaciones de E/S digital.
