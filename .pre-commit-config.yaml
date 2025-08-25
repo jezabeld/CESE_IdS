@@ -7,8 +7,8 @@ repos:
       - id: trailing-whitespace
       - id: check-case-conflict
       - id: check-merge-conflict
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v15.0.6
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.10
     hooks:
-      - id: clang-format
-        name: Formating C files with Clang-Format
+    - id: cmake-format
+      name: Formating C files with Clang-Format
