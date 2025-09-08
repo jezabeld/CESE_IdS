@@ -15,6 +15,7 @@
  * 14. Intentar manipular un led fuera de rango y comprobar que se genera un error.
 */
 #include "unity.h"
+#include "leds.h"
 
 void setUp(void){ // si no las creamos nosotros se crean automaticamente por ceedling vacias
 
@@ -22,6 +23,10 @@ void setUp(void){ // si no las creamos nosotros se crean automaticamente por cee
 void tearDown(void){
 
 }
-void test_inicial(void){
-	TEST_FAIL_MESSAGE("Arrancamos...");
+// * 5. Iniciar el driver y revisar que todos los leds estén apagados.
+void test_al_iniciar_todos_leds_apagados(void){
+	uint16_t puerto_virtual = 0xFFFF; // mock de HW
+
+	ledsInitDriver(&puerto_virtual);
+	TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
 }
