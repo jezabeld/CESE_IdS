@@ -17,12 +17,18 @@
 #include "leds.h"
 #include "unity.h"
 
-void setUp(void) { // si no las creamos nosotros se crean automaticamente por ceedling vacias
+static uint16_t puerto_virtual = 0xFFFF; // mock de HW - puerto tiene que ser determinable (segun reqs)
+
+void setUp(void) {
+    ledsInitDriver(&puerto_virtual);
 }
-void tearDown(void) { }
+void tearDown(void) {
+}
+
 // * 5. Iniciar el driver y revisar que todos los leds estén apagados.
 void test_al_iniciar_todos_leds_apagados(void) {
-    uint16_t puerto_virtual = 0xFFFF; // mock de HW - puerto tiene que ser determinable (segun reqs)
+    // esta prueba requiere que el puerto este definido e inicializado
+    uint16_t puerto_virtual = 0xFFFF;
 
     ledsInitDriver(&puerto_virtual);
     TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
@@ -30,13 +36,18 @@ void test_al_iniciar_todos_leds_apagados(void) {
 
 // 1. Prender un led y verificar que no cambia el resto.
 void test_prender_led_verificar_el_resto_no_cambia(void) {
-    uint16_t puerto_virtual = 0xFFFF;
-    // aca ya asumo que al inicio quedan apagados porque lo probe en el test anterior
-    ledsInitDriver(&puerto_virtual);
+
     // definir el nombre de la funcion que enciende un led, numeracion de los leds
     ledsTurnLedOn(3);
     // si numero los leds del 1 al 16 como dicen los reqs, el led 3 corresponde al bit 0,1,[2]
     TEST_ASSERT_EQUAL_HEX16(1 << 2, puerto_virtual);
     // esta funcion solo testea que el bit 2 este prendido, pero no chequea los demas bits
     // TEST_ASSERT_BIT_HIGH(puerto_virtual, 2);
+}
+//  * 2. Prender un led y apagarlo.
+void test_prender_un_led_cualquiera_y_apagarlo(void) {
+
+    ledsTurnLedOn(3);
+    ledsTurnLedOff(3);
+    TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
 }
