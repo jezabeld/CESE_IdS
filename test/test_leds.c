@@ -51,3 +51,12 @@ void test_prender_un_led_cualquiera_y_apagarlo(void) {
     ledsTurnLedOff(3);
     TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
 }
+
+//  * 3. Prender más de un led, apagar uno y verificar que el resto siguen sin cambio.
+void test_prender_mas_de_un_led_apagar_uno_verificar_resto(void) {
+
+    ledsTurnLedOn(3);
+    ledsTurnLedOn(5);
+    ledsTurnLedOff(3);
+    TEST_ASSERT_EQUAL_HEX16(1 << 4, puerto_virtual);
+}
