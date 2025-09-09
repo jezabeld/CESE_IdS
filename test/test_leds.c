@@ -15,6 +15,7 @@
  * 14. Intentar manipular un led fuera de rango y comprobar que se genera un error.
  */
 #include "leds.h"
+#include "mock_errores.h"
 #include "unity.h"
 
 static uint16_t puerto_virtual = 0xFFFF; // mock de HW - puerto tiene que ser determinable (segun reqs)
@@ -59,4 +60,24 @@ void test_prender_mas_de_un_led_apagar_uno_verificar_resto(void) {
     ledsTurnLedOn(5);
     ledsTurnLedOff(3);
     TEST_ASSERT_EQUAL_HEX16(1 << 4, puerto_virtual);
+}
+
+// * 14. Intentar manipular un led fuera de rango y comprobar que se genera un error.
+void test_prender_led_fuera_de_rango_genera_error(void) {
+    registrarMsgError_ExpectAnyArgs();
+    ledsTurnLedOn(17);
+    TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
+
+    registrarMsgError_ExpectAnyArgs();
+    ledsTurnLedOn(0);
+    TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
+}
+void test_apagar_led_fuera_de_rango_genera_error(void) {
+    registrarMsgError_ExpectAnyArgs();
+    ledsTurnLedOff(17);
+    TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
+
+    registrarMsgError_ExpectAnyArgs();
+    ledsTurnLedOff(0);
+    TEST_ASSERT_EQUAL_HEX16(0x0000, puerto_virtual);
 }
