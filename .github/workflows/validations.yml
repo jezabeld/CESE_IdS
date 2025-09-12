@@ -34,7 +34,7 @@ jobs:
         if: success() || failure()
         with:
           name: Ceedling Unit Tests
-          path: buid/artifacts/gcov/junit_test_report.xml
+          path: build/artifacts/gcov/junit_tests_report.xml
           reporter: jest-junit
       - name: Cede Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
@@ -48,7 +48,7 @@ jobs:
           output: both
           thresholds: "75 90"
       - name: Output to Job Summary
-        run: cat code-covergae-results.md >> $GITHUB_STEP_SUMMARY
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
       - name: Add Coverage PR Comment
         uses: marocchino//sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
