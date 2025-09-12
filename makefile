@@ -2,6 +2,7 @@ SRC_DIR = ./src
 INC_DIR = ./inc
 OUT_DIR = ./build
 OBJ_DIR = $(OUT_DIR)/obj
+DOC_DIR = $(OUT_DIR)/docs
 
 SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
@@ -19,3 +20,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	@rm -r $(OUT_DIR)
+
+doc:
+	@echo Creando documentación
+	@mkdir -p $(DOC_DIR)
+	@doxygen
