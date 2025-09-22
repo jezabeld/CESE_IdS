@@ -100,9 +100,10 @@
     - +:test/**
     - -:test/support
   :source:
-    - src/**
+    - App/**
   :include:
-    - inc/** # In simple projects, this entry often duplicates :source
+    - App/** # Include all headers from App subdirectories
+    - Core/Inc
   :support:
     - test/support
   :libraries: []
@@ -122,7 +123,12 @@
 :defines:
   :test:
     - TEST # Simple list option to add symbol 'TEST' to compilation of all files in all test executables
-  :release: []
+    - STM32F446xx # Define STM32 device
+    - USE_HAL_DRIVER # Enable HAL driver
+    - USE_DMA_CB # Enable DMA callback for testing
+  :release:
+    - STM32F446xx
+    - USE_HAL_DRIVER
 
   # Enable to inject name of a test as a unique compilation symbol into its respective executable build.
   :use_test_definition: FALSE
@@ -146,8 +152,10 @@
   :plugins:                        # What plugins should be used by CMock?
     - :ignore
     - :ignore_arg
-    - :expect_any_args
     - :callback
+    - :expect_any_args
+    - :array
+    - :cexception
   :verbosity:  2                   # the options being 0 errors only, 1 warnings and errors, 2 normal info, 3 verbose
   :when_no_prototypes:  :warn      # the options being :ignore, :warn, or :erro
 
