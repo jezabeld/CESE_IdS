@@ -9,6 +9,12 @@ permissions:
   actions: read
   checks: write
   pull-requests: write
+  pages: write          # <-- necesario para deploy a Pages
+  id-token: write       # <-- necesario para deploy a Pages
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   verifications:
@@ -55,3 +61,35 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
+      # --- NUEVO: generar HTML y desplegar en Pages ---
+      - name: Generate HTML coverage report
+        run: |
+          mkdir -p build/artifacts/gcov/gcovr
+          gcovr \
+            --root . \
+            --html-details \
+            --output build/artifacts/gcov/gcovr/coverage.html
+
+      - name: Prepare Pages content
+        run: |
+          OUTDIR="_site/pr-${{ github.event.pull_request.number }}"
+          mkdir -p "$OUTDIR"
+          cp build/artifacts/gcov/gcovr/coverage.* "$OUTDIR/"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy-pages
+        uses: actions/deploy-pages@v4
+
+      - name: Comment Pages URL
+        if: github.event_name == 'pull_request'
+        run: |
+          PAGES_URL="${{ steps.deploy-pages.outputs.page_url }}pr-${{ github.event.pull_request.number }}/coverage.html"
+          echo "Coverage HTML: ${PAGES_URL}"
+          gh pr comment ${{ github.event.pull_request.number }} --body "📊 [Coverage HTML](${PAGES_URL})"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
