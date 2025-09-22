@@ -1,0 +1,95 @@
+name: validations
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+  pages: write          # <-- necesario para deploy a Pages
+  id-token: write       # <-- necesario para deploy a Pages
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  verifications:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.2"
+      - name: Install Ceedling
+        run: gem install ceedling
+      - name: Install GCov Reporter
+        run: pip install gcovr
+      - name: Run Format Validations
+        uses: pre-commit/action@v3.0.0
+      - name: Run Unit Tests
+        run: ceedling clobber gcov:all
+      - name: Test Result Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Ceedling Unit Tests
+          path: build/artifacts/gcov/junit_tests_report.xml
+          reporter: jest-junit
+      - name: Cede Coverage Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: build/artifacts/gcov/gcovr/GcovCoverageCobertura.xml
+          badge: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: false
+          indicators: true
+          output: both
+          thresholds: "75 90"
+      - name: Output to Job Summary
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      - name: Add Coverage PR Comment
+        uses: marocchino//sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md
+      # --- NUEVO: generar HTML y desplegar en Pages ---
+      - name: Generate HTML coverage report
+        run: |
+          mkdir -p build/artifacts/gcov/gcovr
+          gcovr \
+            --root . \
+            --html-details \
+            --output build/artifacts/gcov/gcovr/coverage.html
+
+      - name: Prepare Pages content
+        run: |
+          OUTDIR="_site/pr-${{ github.event.pull_request.number }}"
+          mkdir -p "$OUTDIR"
+          cp build/artifacts/gcov/gcovr/coverage.* "$OUTDIR/"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy-pages
+        uses: actions/deploy-pages@v4
+
+      - name: Comment Pages URL
+        if: github.event_name == 'pull_request'
+        run: |
+          PAGES_URL="${{ steps.deploy-pages.outputs.page_url }}pr-${{ github.event.pull_request.number }}/coverage.html"
+          echo "Coverage HTML: ${PAGES_URL}"
+          gh pr comment ${{ github.event.pull_request.number }} --body "📊 [Coverage HTML](${PAGES_URL})"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
